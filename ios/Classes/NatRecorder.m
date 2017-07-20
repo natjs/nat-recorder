@@ -3,7 +3,7 @@
 //  NatRecorder.m
 //
 //  Created by huangyake on 17/1/7.
-//  Copyright © 2017 Nat. All rights reserved.
+//  Copyright © 2017 Instapp. All rights reserved.
 //
 
 #import "NatRecorder.h"
@@ -35,6 +35,7 @@
     
     if (self.audioRecorder) {
         [self.audioRecorder record];
+        callBack(nil,nil);
     }else{
         AVAudioSession *audioSession=[AVAudioSession sharedInstance];
         //设置为播放和录音状态，以便可以在录制完之后播放录音
@@ -82,7 +83,7 @@
 }
 - (void)stop:(NatCallback)callBack{
     self.stopback = callBack;
-    if (self.audioRecorder.isRecording) {
+    if (self.audioRecorder) {
         [self.audioRecorder stop];
         self.audioRecorder = nil;
         NSString *str = self.file;
