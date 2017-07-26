@@ -16,26 +16,26 @@ import omrecorder.Recorder;
 
 /**
  * Created by xuqinchao on 17/1/7.
- *  Copyright (c) 2017 Nat. All rights reserved.
+ *  Copyright (c) 2017 Instapp. All rights reserved.
  * 
  */
 
-public class HLRecorderModule {
+public class RecorderModule {
     private Recorder mRecorder;
     private File mFile;
     private boolean mIsRecording;
     private boolean mIsPausing;
 
-    private static volatile HLRecorderModule instance = null;
+    private static volatile RecorderModule instance = null;
 
-    private HLRecorderModule(){
+    private RecorderModule(){
     }
 
-    public static HLRecorderModule getInstance() {
+    public static RecorderModule getInstance() {
         if (instance == null) {
-            synchronized (HLRecorderModule.class) {
+            synchronized (RecorderModule.class) {
                 if (instance == null) {
-                    instance = new HLRecorderModule();
+                    instance = new RecorderModule();
                 }
             }
         }
@@ -43,7 +43,7 @@ public class HLRecorderModule {
         return instance;
     }
 
-    public void start(HashMap<String, String> options, HLModuleResultListener listener){
+    public void start(HashMap<String, String> options, ModuleResultListener listener){
         int audioChannel = AudioFormat.CHANNEL_IN_STEREO;
         if (options.get("channel").equals("mono")) audioChannel = AudioFormat.CHANNEL_IN_MONO;
         int sampleRate = 22050;
@@ -65,15 +65,15 @@ public class HLRecorderModule {
                 mIsPausing = false;
                 listener.onResult(null);
             } else {
-                listener.onResult(HLUtil.getError(HLConstant.RECORDER_BUSY, HLConstant.RECORDER_BUSY_CODE));
+                listener.onResult(Util.getError(Constant.RECORDER_BUSY, Constant.RECORDER_BUSY_CODE));
             }
         } else {
             String time_str = new Date().getTime() + "";
             try {
-                mFile = HLUtil.getHLFile(time_str + ".wav");
+                mFile = Util.getFile(time_str + ".wav");
             } catch (IOException e) {
                 e.printStackTrace();
-                listener.onResult(HLUtil.getError(HLConstant.MEDIA_INTERNAL_ERROR, HLConstant.MEDIA_INTERNAL_ERROR_CODE));
+                listener.onResult(Util.getError(Constant.MEDIA_INTERNAL_ERROR, Constant.MEDIA_INTERNAL_ERROR_CODE));
             }
             mRecorder = OmRecorder.wav(
                     new PullTransport.Default(getMic(audioBit, audioChannel, sampleRate), new PullTransport.OnAudioChunkPulledListener() {
@@ -88,9 +88,9 @@ public class HLRecorderModule {
         }
     }
 
-    public void pause(HLModuleResultListener listener) {
+    public void pause(ModuleResultListener listener) {
         if (!mIsRecording) {
-            listener.onResult(HLUtil.getError(HLConstant.RECORDER_NOT_STARTED, HLConstant.RECORDER_NOT_STARTED_CODE));
+            listener.onResult(Util.getError(Constant.RECORDER_NOT_STARTED, Constant.RECORDER_NOT_STARTED_CODE));
             return;
         }
         if (mIsPausing) {
@@ -104,9 +104,9 @@ public class HLRecorderModule {
         }
     }
 
-    public void stop(HLModuleResultListener listener) {
+    public void stop(ModuleResultListener listener) {
         if (!mIsRecording) {
-            listener.onResult(HLUtil.getError(HLConstant.RECORDER_NOT_STARTED, HLConstant.RECORDER_NOT_STARTED_CODE));
+            listener.onResult(Util.getError(Constant.RECORDER_NOT_STARTED, Constant.RECORDER_NOT_STARTED_CODE));
             return;
         }
         if (mRecorder != null) {
